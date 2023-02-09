@@ -1,15 +1,15 @@
 ﻿Console.Clear();
-System.Console.WriteLine($"The result of your formula is: {Evaluate(GetFormula())}");
+System.Console.WriteLine($"The result of your formula is: {Math.Round(Evaluate(GetFormula()), 2)}");
 
 string GetFormula() //get input of user
 {
     System.Console.Write("Please enter a formula: ");
     return Console.ReadLine()!.Replace(" ", "");
 }
-int Evaluate(string formula)//Evaluate the result of the formula
+double Evaluate(string formula)//Evaluate the result of the formula
 {
     if (formula.Length == 0) { return 0; } //if the input is empty return 0
-    formula = EvaluateCling(formula);
+    formula = EvaluateBracket(formula);
     string subFormula = formula.Substring(1);
     if (subFormula.Contains('+') || subFormula.Contains('-')) //ignore the first character incase it is a operation
     {
@@ -28,36 +28,36 @@ int Evaluate(string formula)//Evaluate the result of the formula
         //depending on the operator do the operation with recursive programming
         if (lastIndexOfMulDiv == lastIndexMultiply)
         {
-            return Evaluate(formula.Substring(0, lastIndexOfMulDiv)) * int.Parse(formula.Substring(lastIndexOfMulDiv + 1));
+            return Evaluate(formula.Substring(0, lastIndexOfMulDiv)) * double.Parse(formula.Substring(lastIndexOfMulDiv + 1));
         }
         else
         {
-            return Evaluate(formula.Substring(0, lastIndexOfMulDiv)) / int.Parse(formula.Substring(lastIndexOfMulDiv + 1));
+            return Evaluate(formula.Substring(0, lastIndexOfMulDiv)) / double.Parse(formula.Substring(lastIndexOfMulDiv + 1));
         }
     }
-    else { return int.Parse(formula); } //if there is no operator just return the number
+    else { return double.Parse(formula); } //if there is no operator just return the number
 }
-//I was bored so i did clings as well so know you can use () in your formula
-string EvaluateCling(string formula)//gives back a formula without clings
+//I was bored so i did brackets as well so know you can use () in your formula
+string EvaluateBracket(string formula)//gives back a formula without brackets
 {
-    int indexClingOpen = formula.IndexOf('(');//gets first opened cling
-    int indexClingClosed = FindIndexOfClosingCling(formula);//gets the index of the fitting closing cling
-    if (indexClingClosed != -1)//checks if there are still clings left in the formula
+    int indexBracketOpen = formula.IndexOf('(');//gets first opened brackets
+    int indexBracketClosed = FindIndexOfClosedBracket(formula);//gets the index of the fitting closing bracket
+    if (indexBracketClosed != -1)//checks if there are still clings left in the formula
     {
-        string stringToEvaluate = formula.Substring(indexClingOpen + 1, indexClingClosed - indexClingOpen - 1);
-        return $"{formula.Substring(0, indexClingOpen)}{Evaluate(stringToEvaluate)}{EvaluateCling(formula.Substring(indexClingClosed + 1))}";//makes a new formula without clings
+        string stringToEvaluate = formula.Substring(indexBracketOpen + 1, indexBracketClosed - indexBracketOpen - 1);
+        return $"{formula.Substring(0, indexBracketOpen)}{Evaluate(stringToEvaluate)}{EvaluateBracket(formula.Substring(indexBracketClosed + 1))}";//makes a new formula without clings
     }
     return formula;
 }
-int FindIndexOfClosingCling(string formula)//gives back the index of the closing cling
+int FindIndexOfClosedBracket(string formula)//gives back the index of the closing bracket
 {
-    int clingsOpened = 0;
-    int clingsClosed = 0;
+    int bracketsOpened = 0;
+    int bracketsClosed = 0;
     for (int i = 0; i < formula.Length; i++)
     {
-        if (formula[i] == '(') { clingsOpened++; }
-        else if (formula[i] == ')') { clingsClosed++; }
-        if (clingsOpened == clingsClosed && clingsOpened != 0) { return i; }
+        if (formula[i] == '(') { bracketsOpened++; }
+        else if (formula[i] == ')') { bracketsClosed++; }
+        if (bracketsOpened == bracketsClosed && bracketsOpened != 0) { return i; }
     }
     return -1;
 }
